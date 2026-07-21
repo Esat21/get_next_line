@@ -5,20 +5,31 @@
 int main()
 {
 	int		fd;
-	int		trick_fd;
-	int		read_bytes;
-	int		bytes_num;
+	int		nb;
 	char	*str;
-	char	*buff;
+	int 	i;
 
 	fd = open("./trick.txt", O_RDONLY);
-	str = malloc(1000);
-	// while (str == get_next_line(fd))
+	// str = get_next_line(fd);
+	// while (str)
 	// {
-	// 	printf("%s\n",  str);
+	// 	printf("%s",  str);
 	// 	free(str);
+	// 	str = get_next_line(fd);
 	// }
-	str = get_next_line(fd);
-	printf("%s",  str);
+	// free(str);
+	// read(fd, str, BUFFER_SIZE);
+	// printf("%s",  str);
+	// if (!str)
+	// 	printf("hell");
+	// free(str);
+	i = 0;
+	while (i < 10)
+	{		
+		str = get_next_line(fd);
+		printf("%s",  str);
+		free(str);
+		i++;
+	}
 	close(fd);
 }

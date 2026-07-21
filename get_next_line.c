@@ -6,59 +6,57 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:35:06 by esyaman           #+#    #+#             */
-/*   Updated: 2026/07/21 11:34:55 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/07/21 16:55:29 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char *result_append(char *result, char *buff, int pos)
+char	*result_append(char *result, char *buff, int pos)
 {
 	char	*temp;
 
 	temp = malloc(ft_strlen(result) + pos + 1);
-	ft_strlcpy(temp, result, ft_strlen(result) + 1);
-	ft_strlcat(temp, buff, ft_strlen(temp) + pos + 1);
+	if (!temp)
+		return (NULL);
+	if (result)
+	{
+		ft_strlcpy(temp, result, ft_strlen(result) + 1);
+		ft_strlcat(temp, buff, ft_strlen(temp) + pos + 1);
+	}
+	else
+		ft_strlcpy(temp, buff, pos + 1);
 	free(result);
-	result = malloc(ft_strlen(temp) + 1);
-	ft_strlcpy(result, temp, ft_strlen(temp));
-	free(temp);
-	return (result);
+	return (temp);
 }
 
 char	*get_next_line(int fd)
 {
 	char			*result;
-	static char		*hold = NULL;
-	char			*buff;
+	static char		*buff = NULL;
+	int				b_r;
 
-	buff = malloc(BUFFER_SIZE + 1);
-	if (!hold)
-		read(fd, buff, BUFFER_SIZE);
-	else
-		ft_strlcpy(buff, hold, ft_strlen(hold) + 1);
+	result = NULL;
+	if(!buff)
+	{
+		buff = malloc(BUFFER_SIZE + 1);
+		if (!buff)
+			return (NULL);
+		b_r = read(fd, buff, BUFFER_SIZE);
+		if (b_r <= 0)
+			return (NULL);
+		buff[BUFFER_SIZE] = '\0';
+	}
+	while (ft_strchr_n(buff, '\n') < 0 && b_r > 0)
+	{
+		result = result_append(result, buff, BUFFER_SIZE + 1);
+		b_r = read(fd, buff, BUFFER_SIZE);
+		buff[BUFFER_SIZE] = '\0';
+	}
 	if (ft_strchr_n(buff, '\n') >= 0)
 	{
-		result = malloc(ft_strchr_n(buff, '\n') + 1);
-		ft_strlcpy(result, buff, ft_strchr_n(buff, '\n'));
-		return (result);
-	}
-	else
-	{
-		result = malloc(BUFFER_SIZE + 1);
-		ft_strlcpy(result, buff, BUFFER_SIZE + 2);
-		read(fd, buff, BUFFER_SIZE);
-		while (ft_strchr_n(buff, '\n') < 0)
-		{
-			result_append(result, buff, BUFFER_SIZE + 1);
-			read(fd, buff, BUFFER_SIZE);
-		}
-		if (ft_strchr_n(buff, '\n') >= 0 || !buff)
-		{
-			result_append(result, buff, ft_strchr_n(buff, '\n') + 1);
-			hold = malloc(ft_strlen(buff + ft_strchr_n(buff, '\n')) + 2);
-			ft_strlcpy(hold, (buff + ft_strchr_n(buff, '\n')), (ft_strlen(buff) - ft_strchr_n(buff, '\n')));
-		}
+		result = result_append(result, buff, ft_strchr_n(buff, '\n'));
+		ft_strlcpy(buff, (buff + ft_strchr_n(buff, '\n')), ft_strlen(buff));
 	}
 	return (result);
 }
