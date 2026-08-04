@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:35:06 by esyaman           #+#    #+#             */
-/*   Updated: 2026/08/04 19:49:22 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/04 19:50:30 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*result_append(char *result, char *buff, int pos)
 {
@@ -55,27 +55,27 @@ static char	*extract_line(char **buff, char *result)
 char	*get_next_line(int fd)
 {
 	char			*result;
-	static char		*buff = NULL;
+	static char		*buff[1024] = {};
 	int				bytes_read;
 
-	if (!buff)
+	if (!buff[fd])
 	{
-		buff = malloc(BUFFER_SIZE + 1);
-		if (!buff)
+		buff[fd] = malloc(BUFFER_SIZE + 1);
+		if (!buff[fd])
 			return (NULL);
-		buff[0] = '\0';
+		buff[fd][0] = '\0';
 	}
 	result = NULL;
-	while (find_new_line(buff, '\n') < 0)
+	while (find_new_line(buff[fd], '\n') < 0)
 	{
-		if (buff[0] != '\0')
-			result = result_append(result, buff, BUFFER_SIZE);
-		bytes_read = read_and_terminate(fd, buff);
+		if (buff[fd][0] != '\0')
+			result = result_append(result, buff[fd], BUFFER_SIZE);
+		bytes_read = read_and_terminate(fd, buff[fd]);
 		if (bytes_read <= 0)
 			break ;
 	}
-	if (find_new_line(buff, '\n') >= 0)
-		result = extract_line(&buff, result);
+	if (find_new_line(buff[fd], '\n') >= 0)
+		result = extract_line(&buff[fd], result);
 	return (result);
 }
 

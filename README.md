@@ -99,6 +99,9 @@ the current line, rather than reading the entire file into memory at once,
 and satisfies the subject's requirement of reading a file line by line using
 only `read`, `malloc`, and `free`.
 
+# Bonus part
+- For the bonus part, an array of _buff_s were used to manage multiple file descriptors, thus multiple files. Each fd is used as an index in the array of strings of buff, which is a static array of *char.
+
 ## Resources
 
 - [read(2) — Linux man page](https://man7.org/linux/man-pages/man2/read.2.html)
