@@ -6,7 +6,7 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:36:02 by esyaman           #+#    #+#             */
-/*   Updated: 2026/07/21 16:38:30 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/04 12:18:47 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
-# define BUFFER_SIZE 7
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
 
 char			*get_next_line(int fd);
 
@@ -26,6 +29,6 @@ size_t			ft_strlen(const char *s);
 
 size_t			ft_strlcpy(char *dest, const char *src, size_t n);
 
-int				ft_strchr_n(const char *s, int c);
+int				find_new_line(const char *s, int c);
 
 #endif

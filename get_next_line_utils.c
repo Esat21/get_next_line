@@ -6,7 +6,7 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:35:40 by esyaman           #+#    #+#             */
-/*   Updated: 2026/07/21 16:37:52 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/04 12:19:20 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ unsigned	int	ft_strlcat(char *dest, const char *src, size_t size)
 	return (src_len + dest_len);
 }
 
-int	ft_strchr_n(const char *s, int c)
+int	find_new_line(const char *s, int c)
 {
 	int	i;
 	int	len;
