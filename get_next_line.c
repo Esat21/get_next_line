@@ -6,7 +6,7 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:35:06 by esyaman           #+#    #+#             */
-/*   Updated: 2026/08/04 19:49:22 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/05 18:26:32 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,13 @@ static int	read_and_terminate(int fd, char *buff)
 	return (bytes_read);
 }
 
-static char	*extract_line(char **buff, char *result)
+static char	*extract_line(char *buff, char *result)
 {
 	int	pos;
 
-	pos = find_new_line(*buff, '\n');
-	result = result_append(result, *buff, pos);
-	ft_strlcpy(*buff, (*buff + pos), ft_strlen(*buff));
+	pos = find_new_line(buff, '\n');
+	result = result_append(result, buff, pos);
+	ft_strlcpy(buff, (buff + pos), ft_strlen(buff));
 	return (result);
 }
 
@@ -75,24 +75,26 @@ char	*get_next_line(int fd)
 			break ;
 	}
 	if (find_new_line(buff, '\n') >= 0)
-		result = extract_line(&buff, result);
+		result = extract_line(buff, result);
+	if (bytes_read <= 0 && buff)
+		free(buff);
 	return (result);
 }
 
-// #include "get_next_line.h"
-// #include <fcntl.h>
-// #include <limits.h>
+#include "get_next_line.h"
+#include <fcntl.h>
+#include <limits.h>
 
-// int main()
-// {
-// 	int		fd;
-// 	char	*str;
+int main()
+{
+	int		fd;
+	char	*str;
 
-// 	fd = open("./test", O_RDONLY);
-// 	while ((str = get_next_line(fd)))
-// 	{
-// 		printf("%s",  str);
-// 		free(str);
-// 	}
-// 	close(fd);
-// }
+	fd = open("./test.txt", O_RDONLY);
+	while ((str = get_next_line(fd)))
+	{
+		printf("%s",  str);
+		free(str);
+	}
+	close(fd);
+}
