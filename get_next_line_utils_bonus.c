@@ -6,7 +6,7 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:35:40 by esyaman           #+#    #+#             */
-/*   Updated: 2026/08/04 19:50:04 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/07 16:07:34 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	ft_strlen(const char *s)
 	size_t	i;
 
 	i = 0;
-	while (s && s[i] != '\0')
+	while (s && s[i])
 		i++;
 	return (i);
 }

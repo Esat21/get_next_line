@@ -6,7 +6,7 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:36:02 by esyaman           #+#    #+#             */
-/*   Updated: 2026/08/04 19:49:49 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/07 17:14:15 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
+#  define BUFFER_SIZE 9
 # endif
 
 char			*get_next_line(int fd);

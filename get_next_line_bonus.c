@@ -6,11 +6,17 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:35:06 by esyaman           #+#    #+#             */
-/*   Updated: 2026/08/05 18:11:13 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/07 17:31:53 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
+
+static void	free_set_null(char *buff)
+{
+	free (buff);
+	buff = NULL;
+}
 
 static char	*result_append(char *result, char *buff, int pos)
 {
@@ -46,7 +52,10 @@ static char	*extract_line(char *buff, char *result)
 {
 	int	pos;
 
-	pos = find_new_line(buff, '\n');
+	if (buff)
+		pos = find_new_line(buff, '\n');
+	else
+		pos = -1;
 	result = result_append(result, buff, pos);
 	ft_strlcpy(buff, (buff + pos), ft_strlen(buff));
 	return (result);
@@ -58,6 +67,7 @@ char	*get_next_line(int fd)
 	static char		*buff[1024] = {};
 	int				bytes_read;
 
+	bytes_read = 1;
 	if (!buff[fd])
 	{
 		buff[fd] = malloc(BUFFER_SIZE + 1);
@@ -66,35 +76,15 @@ char	*get_next_line(int fd)
 		buff[fd][0] = '\0';
 	}
 	result = NULL;
-	while (find_new_line(buff[fd], '\n') < 0)
+	while (buff[fd] && find_new_line(buff[fd], '\n') < 0 && bytes_read > 0)
 	{
 		if (buff[fd][0] != '\0')
 			result = result_append(result, buff[fd], BUFFER_SIZE);
 		bytes_read = read_and_terminate(fd, buff[fd]);
-		if (bytes_read <= 0)
-			break ;
 	}
-	if (find_new_line(buff[fd], '\n') >= 0)
+	if (buff[fd] && find_new_line(buff[fd], '\n') >= 0)
 		result = extract_line(buff[fd], result);
-	if (bytes_read <= 0)
-		free(buff);
+	if (bytes_read <= 0 && (!result || !result[0]))
+		free_set_null(buff[fd]);
 	return (result);
 }
-
-// #include "get_next_line.h"
-// #include <fcntl.h>
-// #include <limits.h>
-
-// int main()
-// {
-// 	int		fd;
-// 	char	*str;
-
-// 	fd = open("./test", O_RDONLY);
-// 	while ((str = get_next_line(fd)))
-// 	{
-// 		printf("%s",  str);
-// 		free(str);
-// 	}
-// 	close(fd);
-// }
