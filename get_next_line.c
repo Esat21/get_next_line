@@ -6,16 +6,16 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:35:06 by esyaman           #+#    #+#             */
-/*   Updated: 2026/08/07 17:32:34 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/09 19:22:32 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static void	free_set_null(char *buff)
+static void	free_set_null(char *buff, int bytes_read, char *result)
 {
-	free (buff);
-	buff = NULL;
+	if (bytes_read <= 0 && (!result || !result[0]))
+		free (buff);
 }
 
 static char	*result_append(char *result, char *buff, int pos)
@@ -70,6 +70,8 @@ char	*get_next_line(int fd)
 	bytes_read = 1;
 	if (!buff)
 	{
+		if (fd < 0)
+			return (NULL);
 		buff = malloc(BUFFER_SIZE + 1);
 		if (!buff)
 			return (NULL);
@@ -84,8 +86,7 @@ char	*get_next_line(int fd)
 	}
 	if (buff && find_new_line(buff, '\n') >= 0)
 		result = extract_line(buff, result);
-	if (bytes_read <= 0 && (!result || !result[0]))
-		free_set_null(buff);
+	free_set_null(buff, bytes_read, result);
 	return (result);
 }
 
@@ -98,7 +99,7 @@ char	*get_next_line(int fd)
 // 	int		fd;
 // 	char	*str;
 
-// 	fd = open("./test.txt", O_RDONLY);
+// 	fd = open("empty", O_RDONLY);
 // 	while ((str = get_next_line(fd)))
 // 	{
 // 		printf("%s",  str);

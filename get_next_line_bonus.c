@@ -6,7 +6,7 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:35:06 by esyaman           #+#    #+#             */
-/*   Updated: 2026/08/07 17:31:53 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/09 18:54:32 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,3 +88,21 @@ char	*get_next_line(int fd)
 		free_set_null(buff[fd]);
 	return (result);
 }
+
+// #include "get_next_line.h"
+// #include <fcntl.h>
+// #include <limits.h>
+
+// int main()
+// {
+// 	int		fd;
+// 	char	*str;
+
+// 	fd = open("./README.md", O_RDONLY);
+// 	while ((str = get_next_line(fd)))
+// 	{
+// 		printf("%s",  str);
+// 		free(str);
+// 	}
+// 	close(fd);
+// }
