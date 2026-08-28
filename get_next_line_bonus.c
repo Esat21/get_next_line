@@ -6,86 +6,96 @@
 /*   By: esyaman <esyaman@student.42warsaw.pl>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:35:06 by esyaman           #+#    #+#             */
-/*   Updated: 2026/08/09 18:54:32 by esyaman          ###   ########.fr       */
+/*   Updated: 2026/08/28 16:17:25 by esyaman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-static void	free_set_null(char *buff)
+static char	*extract_and_cut(char *result, char *buff, int index)
 {
-	free (buff);
-	buff = NULL;
-}
+	char	*joined;
+	int		l_result;
 
-static char	*result_append(char *result, char *buff, int pos)
-{
-	char	*temp;
-
-	temp = malloc(ft_strlen(result) + pos + 1);
-	if (!temp)
+	l_result = ft_strlen(result);
+	joined = malloc(l_result + index + 2);
+	if (!*buff || !joined)
 		return (NULL);
-	if (result)
-	{
-		ft_strlcpy(temp, result, ft_strlen(result) + 1);
-		ft_strlcat(temp, buff, ft_strlen(temp) + pos + 1);
-	}
-	else
-		ft_strlcpy(temp, buff, pos + 1);
+	ft_strlcpy(joined, result, l_result + 1);
+	ft_strlcpy(joined + l_result, buff, index + 2);
+	ft_strlcpy(buff, buff + index + 1, BUFFER_SIZE);
 	free(result);
-	return (temp);
+	return (joined);
 }
 
-static int	read_and_terminate(int fd, char *buff)
+static char	*joiner(char *result, char *buff)
 {
-	int	bytes_read;
+	int		l_result;
+	int		l_buff;
+	char	*joined;
 
-	bytes_read = read(fd, buff, BUFFER_SIZE);
-	if (bytes_read > 0)
-		buff[bytes_read] = '\0';
-	else
-		buff[0] = '\0';
-	return (bytes_read);
+	joined = NULL;
+	l_result = ft_strlen(result);
+	l_buff = ft_strlen(buff);
+	if ((l_result + l_buff) > 0)
+	{
+		joined = malloc((l_result + l_buff + 1));
+		if (!joined)
+			return (NULL);
+		if (joined)
+			ft_strlcpy(joined, result, l_result + 1);
+		if (buff)
+			ft_strlcpy(joined + l_result, buff, l_buff + 1);
+	}
+	free(result);
+	free(buff);
+	return (joined);
 }
 
-static char	*extract_line(char *buff, char *result)
+static char	*read_and_terminate(int fd)
 {
-	int	pos;
+	char	*buffer;
+	int		i;
 
-	if (buff)
-		pos = find_new_line(buff, '\n');
-	else
-		pos = -1;
-	result = result_append(result, buff, pos);
-	ft_strlcpy(buff, (buff + pos), ft_strlen(buff));
-	return (result);
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (NULL);
+	i = -1;
+	while (++i < BUFFER_SIZE + 1)
+		buffer[i] = 0;
+	if (read(fd, buffer, BUFFER_SIZE) <= 0)
+	{
+		free(buffer);
+		return (NULL);
+	}
+	return (buffer);
 }
 
 char	*get_next_line(int fd)
 {
-	char			*result;
-	static char		*buff[1024] = {};
-	int				bytes_read;
+	static char	*buff[1024] = {};
+	char		*result;
+	int			i;
 
-	bytes_read = 1;
-	if (!buff[fd])
-	{
-		buff[fd] = malloc(BUFFER_SIZE + 1);
-		if (!buff[fd])
-			return (NULL);
-		buff[fd][0] = '\0';
-	}
 	result = NULL;
-	while (buff[fd] && find_new_line(buff[fd], '\n') < 0 && bytes_read > 0)
+	if (!buff[fd])
+		buff[fd] = read_and_terminate(fd);
+	i = -1;
+	while (++i >= 0 && buff[fd])
 	{
-		if (buff[fd][0] != '\0')
-			result = result_append(result, buff[fd], BUFFER_SIZE);
-		bytes_read = read_and_terminate(fd, buff[fd]);
+		if (!buff[fd][i])
+		{
+			result = joiner(result, buff[fd]);
+			buff[fd] = read_and_terminate(fd);
+			i = 0;
+		}
+		if (buff[fd] && buff[fd][i] == '\n')
+		{
+			result = extract_and_cut(result, buff[fd], i);
+			i = 0;
+			break ;
+		}
 	}
-	if (buff[fd] && find_new_line(buff[fd], '\n') >= 0)
-		result = extract_line(buff[fd], result);
-	if (bytes_read <= 0 && (!result || !result[0]))
-		free_set_null(buff[fd]);
 	return (result);
 }
 
@@ -95,14 +105,32 @@ char	*get_next_line(int fd)
 
 // int main()
 // {
-// 	int		fd;
-// 	char	*str;
+// 	int		fd1, fd2, fd3;
+// 	char	*str1, *str2, *str3;
 
-// 	fd = open("./README.md", O_RDONLY);
-// 	while ((str = get_next_line(fd)))
+// 	fd1 = open("./test1", O_RDONLY);
+// 	fd2 = open("./test2", O_RDONLY);
+// 	fd3 = open("./test3", O_RDONLY);
+// 	str1 = get_next_line(fd1); 
+// 	str2 = get_next_line(fd2);
+// 	str3 = get_next_line(fd3);
+// 	while (str1 || str2 || str3)
 // 	{
-// 		printf("%s",  str);
-// 		free(str);
+// 		if (str1)
+// 			printf("fd1: %s",  str1);
+// 		if (str2)
+// 			printf("fd2: %s",  str2);
+// 		if (str3)
+// 			printf("fd3: %s",  str3);
+// 		free(str1);
+// 		free(str2);
+// 		free(str3);
+// 		str1 = get_next_line(fd1); 
+// 		str2 = get_next_line(fd2);
+// 		str3 = get_next_line(fd3);
 // 	}
-// 	close(fd);
+// 	close(fd1);
+// 	close(fd2);
+// 	close(fd3);
+// 	return (3547);
 // }
