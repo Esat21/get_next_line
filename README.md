@@ -62,11 +62,11 @@ The caller is always responsible for `free`-ing the string returned by
 
 ### Files
 
-|`get_next_line.c`        | Main logic: `get_next_line`, buffer reading, line extraction|
+|`get_next_line.c`        | Main logic: `get_next_line`, buffer reading, line extraction |
 
-|`get_next_line_utils.c`  | Helper functions: `ft_strlen`, `ft_strlcpy`|
+|`get_next_line_utils.c`  | Helper functions: `ft_strlen`, `ft_strlcpy` |
 
-|`get_next_line.h`        | Header with prototypes and the `BUFFER_SIZE` default|
+|`get_next_line.h`        | Header with prototypes and the `BUFFER_SIZE` default |
 
 ## Algorithm
 
