@@ -62,11 +62,9 @@ The caller is always responsible for `free`-ing the string returned by
 
 ### Files
 
-| File                     | Role                                                        |
-|--------------------------|--------------------------------------------------------------|
-| `get_next_line.c`        | Main logic: `get_next_line`, buffer reading, line extraction |
-| `get_next_line_utils.c`  | Helper functions: `ft_strlen`, `ft_strlcpy`, `ft_strlcat`, `find_new_line` |
-| `get_next_line.h`        | Header with prototypes and the `BUFFER_SIZE` default         |
+`get_next_line.c`        | Main logic: `get_next_line`, buffer reading, line extraction
+`get_next_line_utils.c`  | Helper functions: `ft_strlen`, `ft_strlcpy`
+`get_next_line.h`        | Header with prototypes and the `BUFFER_SIZE` default
 
 ## Algorithm
 
@@ -79,17 +77,17 @@ where it left off between calls even though it only returns.
    `static`, it survives between successive calls to `get_next_line` for as
    long as the program runs — this is what lets the function pick up exactly
    where the previous call stopped.
-2. **Read until a newline is found.** As long as `buff` contains no `\n`
-   (checked with `find_new_line`), the function keeps calling `read(fd, buff,
+2. **Read until a newline is found.** As long as `buff` contains no `\n`,
+   the function keeps calling `read(fd, buff,
    BUFFER_SIZE)` and accumulating what was already in `buff` into a growing
-   `result` string (`result_append`), which reallocates and concatenates the
+   `result` string, which reallocates and concatenates the
    new chunk each time. Reading stops either when a `\n` is found or when
    `read` returns `0`/`-1` (end of file or error).
 3. **Extract one line.** Once a `\n` is present in `buff` (or EOF is reached),
-   `extract_line` appends everything up to and including the `\n` to
+   `extract_and_cut` appends everything up to and including the `\n` to
    `result`, then shifts the remainder of `buff` (anything read past that
    newline) to the front of the buffer with `ft_strlcpy`, so it's ready to be
-   reused on the next call.
+   reused on the next call. For cases with `buff` with no `\n`, the `joiner` function is used to join the `result` and `buff`.
 4. **Return.** The completed line (`result`) is returned to the caller. If
    nothing more can be read and no line is pending, `get_next_line` returns
    `NULL`.
@@ -100,7 +98,7 @@ and satisfies the subject's requirement of reading a file line by line using
 only `read`, `malloc`, and `free`.
 
 # Bonus part
-- For the bonus part, an array of _buff_s were used to manage multiple file descriptors, thus multiple files. Each fd is used as an index in the array of strings of buff, which is a static array of *char.
+- For the bonus part, an array of `buff`s were used to manage multiple file descriptors, thus multiple files. Each fd is used as an index in the array of strings of buff, which is a static array of *char. Since the maximum number of file descriptors that can be opened on a linux system is 1024, the size of the array was hardcoded.
 
 ## Resources
 
